@@ -1,0 +1,16 @@
+# All class files
+*.class
+
+# Binaries and cached files
+bin/
+target/
+
+.settings
+.classpath
+.metadata
+.cache
+
+.idea
+*.iml
+
+out/
