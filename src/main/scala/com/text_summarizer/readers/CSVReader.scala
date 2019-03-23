@@ -2,6 +2,7 @@ package com.text_summarizer.readers
 
 import java.io.File
 
+import com.text_summarizer.ApplicationConfiguration
 import com.text_summarizer.models.{Article, SummarizerConfiguration}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, SparkSession}
@@ -40,7 +41,7 @@ class CSVReader(file: File, configuration: SummarizerConfiguration, session: Spa
     val result = session.sparkContext.parallelize(arrayBuffer)
 
     // Persist into HDFS for future use
-    persistToHDFS(result)
+    persistToHDFS(result, ApplicationConfiguration.dataLocation + file.getName.split(".").take(1))
 
     result
   }

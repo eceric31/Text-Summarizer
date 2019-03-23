@@ -9,7 +9,7 @@ import org.apache.spark.sql.SparkSession
 /**
   * Used for instantiating a reader instance.
   */
-class ReaderFactory(
+final case class ReaderFactory(
   file: File,
   session: SparkSession,
   configuration: SummarizerConfiguration

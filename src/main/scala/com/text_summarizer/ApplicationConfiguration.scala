@@ -28,6 +28,14 @@ object ApplicationConfiguration {
     }
   }
 
+  def hdfsConf: Config = {
+    if (configuration.hasPath("text.summarizer.hdfs.configuration")) {
+      configuration.getConfig("text.summarizer.hdfs.configuration")
+    } else {
+      ConfigFactory.empty
+    }
+  }
+
   ////////////////////////////////////////////////////
   //SPARK CONFIGURATION PROPERTIES
   ////////////////////////////////////////////////////
@@ -73,6 +81,18 @@ object ApplicationConfiguration {
       apiConf.getInt("port")
     } else {
       DEFULT_API_PORT
+    }
+  }
+
+  ////////////////////////////////////////////////////
+  //HDFS CONFIGURATION PROPERTIES
+  ////////////////////////////////////////////////////
+
+  def dataLocation: String = {
+    if (apiConf.hasPath("hdfs.articles.location")) {
+      apiConf.getString("hdfs.articles.location")
+    } else {
+      StringUtils.EMPTY
     }
   }
 }
