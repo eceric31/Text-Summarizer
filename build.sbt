@@ -13,6 +13,10 @@ libraryDependencies := Seq(
   "org.apache.spark" %% "spark-yarn" % "2.4.0",
 
   // REST API dependencies
+  "com.typesafe.akka" %% "akka-stream" % "2.5.12",
   "com.typesafe.akka" %% "akka-http" % "10.1.0-RC1",
-  "com.typesafe" % "config" % "1.3.0"
+  "com.typesafe" % "config" % "1.3.0",
+
+  // Stanford CoreNLP
+  "edu.stanford.nlp" % "stanford-corenlp" % "3.4"
 )

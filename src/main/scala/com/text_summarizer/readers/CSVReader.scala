@@ -41,7 +41,10 @@ class CSVReader(file: File, configuration: SummarizerConfiguration, session: Spa
     val result = session.sparkContext.parallelize(arrayBuffer)
 
     // Persist into HDFS for future use
-    persistToHDFS(result, ApplicationConfiguration.dataLocation + file.getName.split(".").take(1))
+    persistToHDFS(
+      result,
+      ApplicationConfiguration.hdfsConf.get("hdfs.articles.location") + file.getName.split(".").take(1)
+    )
 
     result
   }

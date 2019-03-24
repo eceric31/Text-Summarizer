@@ -24,7 +24,14 @@ class SummaryPipeline {
     * @return the [[ToResponseMarshallable]]
     */
   def summarizeText(request: TextSummaryRequest): ToResponseMarshallable = {
-
+    summarize(
+      session.sparkContext.parallelize(
+        Seq(
+          Article(null, null, null, request.text)
+        )
+      ),
+      request.configuration
+    )
   }
 
   /**
@@ -34,7 +41,10 @@ class SummaryPipeline {
     * @return the [[ToResponseMarshallable]]
     */
   def summarizeFilePath(request: FilePathSummaryRequest): ToResponseMarshallable = {
-    val data = readFile(new File(request.filePath), request.configuration)
+    summarize(
+      readFile(new File(request.filePath), request.configuration),
+      request.configuration
+    )
   }
 
   /**
@@ -51,6 +61,19 @@ class SummaryPipeline {
 
   private[this] def readFile(file: File, summarizerConfiguration: SummarizerConfiguration): RDD[Article] = {
     ReaderFactory(file, session, summarizerConfiguration).getReader.read
+  }
+
+  private[this] def summarize(
+    data: RDD[Article],
+    summarizerConfiguration: SummarizerConfiguration
+  ): ToResponseMarshallable = {
+    val preprocessor = new TextPreprocessor
+
+//    val preprocessedData = preprocessor
+//      .preprocess(data)
+//      .cache
+
+    null
   }
 
 }

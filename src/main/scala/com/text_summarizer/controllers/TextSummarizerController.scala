@@ -4,12 +4,12 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import com.text_summarizer.models.api.requests.{FilePathSummaryRequest, FileUploadSummaryRequest, TextSummaryRequest}
 import com.text_summarizer.pipelines.SummaryPipeline
-import org.apache.hadoop.yarn.webapp.Controller
+import com.text_summarizer.utils.Json4sSupport._
 
 /**
   * Handles summarization requests.
   */
-object TextSummarizerController extends Controller {
+object TextSummarizerController {
 
   private[this] val summaryPipeline = new SummaryPipeline
 
@@ -37,7 +37,7 @@ object TextSummarizerController extends Controller {
     * @return the [[Route]]
     */
   def summarizeFileUpload: Route = entity(as[FileUploadSummaryRequest]) {
-    request =>
+    null
   }
 
 }

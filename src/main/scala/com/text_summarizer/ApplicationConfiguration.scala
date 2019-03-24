@@ -1,12 +1,21 @@
 package com.text_summarizer
 
+import java.io.File
+
+import akka.ConfigurationException
 import org.apache.commons.lang3.StringUtils
 import com.typesafe.config._
+import org.apache.hadoop.conf.Configuration
 
+import scala.collection.JavaConverters._
+
+/**
+  * The application configuration.
+  */
 object ApplicationConfiguration {
 
   private[this] val DEFULT_API_PORT: Int = 8100
-  private[this] val configuration: Config = ConfigFactory.load("application.conf")
+  private[this] var configuration: Config = ConfigFactory.load()
 
   ////////////////////////////////////////////////////
   //GLOBAL CONFIGURATION PROPERTIES
@@ -28,11 +37,18 @@ object ApplicationConfiguration {
     }
   }
 
-  def hdfsConf: Config = {
-    if (configuration.hasPath("text.summarizer.hdfs.configuration")) {
-      configuration.getConfig("text.summarizer.hdfs.configuration")
+  def hdfsConf: Configuration = {
+    if (sparkConf.hasPath("text.summarizer.hdfs.configuration")) {
+      val rawHDFSConfiguration = sparkConf.getConfig("text.summarizer.hdfs.configuration")
+      val hdfsConfiguration = new Configuration()
+
+      for (entry <- rawHDFSConfiguration.entrySet.asScala) {
+        hdfsConfiguration.set(entry.getKey, entry.getValue.unwrapped.toString)
+      }
+
+      hdfsConfiguration
     } else {
-      ConfigFactory.empty
+      throw new ConfigurationException("HDFS configuration is required, but none was provided.")
     }
   }
 
@@ -84,15 +100,38 @@ object ApplicationConfiguration {
     }
   }
 
-  ////////////////////////////////////////////////////
-  //HDFS CONFIGURATION PROPERTIES
-  ////////////////////////////////////////////////////
+  /**
+    * Loads the configuration at startup.
+    *
+    * Configuration initialization consists of loading an external configuration from a file provided in the startup parameters
+    * (in case such is provided). The argument property is named `--conf-file`.
+    *
+    * @param args application launch parameters
+    */
+  def init(args: Array[String]): Unit = {
+    loadExternalConfiguration(args, "--conf-file")
+    applyOverrides(args)
+  }
 
-  def dataLocation: String = {
-    if (apiConf.hasPath("hdfs.articles.location")) {
-      apiConf.getString("hdfs.articles.location")
-    } else {
-      StringUtils.EMPTY
+  /**
+    * Loads an external configuration file, if one is provided.
+    *
+    * @param launchProperties the launch properties
+    */
+  private[this] def loadExternalConfiguration(launchProperties: Array[String], propertyPrefix: String): Unit = {
+    val confFileParam = launchProperties.find(_.startsWith(propertyPrefix))
+
+    if (confFileParam.isDefined) {
+      configuration = ConfigFactory.parseFile(new File(confFileParam.get.substring(propertyPrefix.length)))
     }
+  }
+
+  /**
+    * Overrides or adds properties contained in the external configuration file, and not in the application.conf.
+    *
+    * @param overrides the application launch overrides
+    */
+  private[this] def applyOverrides(overrides: Array[String]): Unit = {
+
   }
 }
