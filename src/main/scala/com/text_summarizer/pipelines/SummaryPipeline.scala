@@ -67,7 +67,9 @@ class SummaryPipeline {
     data: RDD[Article],
     summarizerConfiguration: SummarizerConfiguration
   ): ToResponseMarshallable = {
+
     val preprocessor = new TextPreprocessor
+    preprocessor.preprocess(data)
 
 //    val preprocessedData = preprocessor
 //      .preprocess(data)

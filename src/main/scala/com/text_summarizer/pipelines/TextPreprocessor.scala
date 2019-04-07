@@ -7,6 +7,8 @@ import edu.stanford.nlp.ling.CoreAnnotations
 import edu.stanford.nlp.pipeline.StanfordCoreNLP
 import org.apache.spark.rdd.RDD
 
+import scala.io.Source
+
 /**
   * Used for pre-processing text.
   */
@@ -15,8 +17,8 @@ class TextPreprocessor {
   /**
     * Load stop words from a resource file.
     */
-  private[this] val stopWords: Set[String] = scala.io.Source.fromInputStream(
-      getClass.getResourceAsStream("/stop_words")
+  private[this] val stopWords: Set[String] = Source.fromInputStream(
+      getClass.getResourceAsStream("/stop_words.csv")
     ).getLines.toSet
 
   /**
@@ -32,7 +34,7 @@ class TextPreprocessor {
     properties.setProperty("annotators", "tokenize, ssplit, parse, lemma")
 
     // Create a preprocessor with the given set of annotators
-    val preprocessor: StanfordCoreNLP = new StanfordCoreNLP(properties)
+    val preprocessor = new StanfordCoreNLP(properties)
 
     data
       .map(article => preprocessor.process(article.content))

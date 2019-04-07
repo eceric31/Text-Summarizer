@@ -2,7 +2,8 @@ package com.text_summarizer
 
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
-import collection.JavaConverters._
+
+import scala.collection.JavaConverters._
 
 object SparkSessionProvider {
 
@@ -21,5 +22,5 @@ object SparkSessionProvider {
 
   val sparkSession: SparkSession = SparkSession.builder.config(sparkConf).getOrCreate
 
-  def getInstance: SparkSession = sparkSession
+  def getInstance: SparkSession = sparkSession.newSession
 }

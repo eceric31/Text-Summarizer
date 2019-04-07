@@ -37,7 +37,7 @@ object TextSummarizerController {
     * @return the [[Route]]
     */
   def summarizeFileUpload: Route = entity(as[FileUploadSummaryRequest]) {
-    null
+    throw new NotImplementedError("File upload is not yet supported.")
   }
 
 }

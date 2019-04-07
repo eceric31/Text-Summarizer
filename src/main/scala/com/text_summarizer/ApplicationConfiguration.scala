@@ -30,16 +30,16 @@ object ApplicationConfiguration {
   }
 
   def apiConf: Config = {
-    if (configuration.hasPath("text.summarizer.api")) {
-      configuration.getConfig("text.summarizer.api")
+    if (configuration.hasPath("api.configuration")) {
+      configuration.getConfig("api.configuration")
     } else {
       ConfigFactory.empty
     }
   }
 
   def hdfsConf: Configuration = {
-    if (sparkConf.hasPath("text.summarizer.hdfs.configuration")) {
-      val rawHDFSConfiguration = sparkConf.getConfig("text.summarizer.hdfs.configuration")
+    if (configuration.hasPath("hdfs.configuration")) {
+      val rawHDFSConfiguration = configuration.getConfig("hdfs.configuration")
       val hdfsConfiguration = new Configuration()
 
       for (entry <- rawHDFSConfiguration.entrySet.asScala) {
@@ -110,7 +110,6 @@ object ApplicationConfiguration {
     */
   def init(args: Array[String]): Unit = {
     loadExternalConfiguration(args, "--conf-file")
-    applyOverrides(args)
   }
 
   /**
@@ -122,16 +121,7 @@ object ApplicationConfiguration {
     val confFileParam = launchProperties.find(_.startsWith(propertyPrefix))
 
     if (confFileParam.isDefined) {
-      configuration = ConfigFactory.parseFile(new File(confFileParam.get.substring(propertyPrefix.length)))
+      configuration = ConfigFactory.parseFile(new File(confFileParam.get.substring(propertyPrefix.length + 1)))
     }
-  }
-
-  /**
-    * Overrides or adds properties contained in the external configuration file, and not in the application.conf.
-    *
-    * @param overrides the application launch overrides
-    */
-  private[this] def applyOverrides(overrides: Array[String]): Unit = {
-
   }
 }
